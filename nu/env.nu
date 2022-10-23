@@ -1,0 +1,1 @@
+C:/Users/Hari/AppData/Roaming/nushell/env.nu
