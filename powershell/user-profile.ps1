@@ -4,6 +4,13 @@ Set-Alias gawk awk
 Set-Alias ll ls
 Set-Alias grep findstr
 Set-Alias -Name c -Value z -Option AllScope
+Set-Alias edit helix
+
+# Function
+function rm([string]$FileName)
+{
+	rm -recurse -force "$FileName"
+}
 
 # Set the prompt to Starship
 Invoke-Expression (&starship init powershell)
