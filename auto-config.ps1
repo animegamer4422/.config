@@ -1,48 +1,61 @@
 # Scoop
 
-#irm get.scoop.sh | iex
 scoop install aria2 git
 scoop config aria2-warning-enabled false
 scoop update
-scoop bucket add main
-scoop bucket add extras
-scoop bucket add versions
-scoop bucket add nerd-fonts
+
+# Scoop check buckets and add them accordingly
+
+# Get the list of currently installed buckets
+$currentBuckets = scoop bucket list
+
+# Define the list of buckets to be added
+$bucketsToAdd = @("main", "versions", "extras", "nerd-fonts")
+
+# Loop through the list of buckets to be added
+foreach ($bucket in $bucketsToAdd) {
+    # Check if the current bucket is already installed
+    if ($currentBuckets -notcontains $bucket) {
+        # Add the bucket if it's not already installed
+        scoop bucket add $bucket
+    }
+}
+
 scoop install cacert dark ffmpeg fzf gawk Hack-NF mpv neovim starship sudo wget yt-dlp
 
 # Winget
 
 winget upgrade
 winget upgrade --all -h
-winget install -h Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
-winget install -h Microsoft.VCRedist.2015+.x64
-winget install -h Microsoft.VCRedist.2015+.x86
-winget install -h DuongDieuPhap.ImageGlass
-winget install -h Microsoft.Powershell
-winget install -h Microsoft.DotNet.DesktopRuntime.6
-winget install -h Eugeny.Tabby
-winget install -h Mozilla.Firefox
-winget install -h Nilesoft.shell
+$installedPackages = winget show --installed
+
+$packagesToCheck = @("Microsoft.DesktopAppInstaller_8wekyb3d8bbwe", "Microsoft.VCRedist.2015+.x64", "Microsoft.VCRedist.2015+.x86", "DuongDieuPhap.ImageGlass", "Microsoft.Powershell", "Microsoft.DotNet.DesktopRuntime.6", "Eugeny.Tabby", "Mozilla.Firefox")
+
+foreach ($package in $packagesToCheck) {
+    if ($installedPackages -notcontains $package) {
+        winget install $package
+    }
+}
+
 
 # Set UAC to Never Notify
 
 New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 0 -PropertyType "DWord" -Force | Out-Null
 
 # Tabby Config
-
-rm C:\Users\Hari\AppData\Roaming\tabby\config.yaml
-cp .\tabby\config.yaml C:\Users\Hari\AppData\Roaming\tabby\ 
+$username = $env:username
+if (Test-Path "C:\Users\$username\AppData\Roaming\tabby\config.yaml") { Remove-Item "C:\Users\$username\AppData\Roaming\tabby\config.yaml"}
+Copy-Item "./tabby/config.yaml" "C:\Users\$username\AppData\Roaming\tabby\config.yaml"
 
 # MPV Config
-
-rm -recurse -force C:\Users\Hari\scoop\persist\mpv\portable_config
-sudo cmd /c mklink /D C:\Users\Hari\scoop\persist\mpv\portable_config C:\Users\Hari\.config\mpv\portable_config
+$path = "$env:userprofile\scoop\persist\mpv\portable_config"
+if (Test-Path $path) {Remove-Item -Recurse -Force $path}
+New-Item -ItemType SymbolicLink -Path $path -Target "$env:userprofile\.config\mpv\portable_config"
 
 # TWEAKS
 
-
 # Create a restore point
-#Checkpoint-Computer -Description "System Restore Point before running auto-setup"
+Checkpoint-Computer -Description "System Restore Point before running auto-setup"
 
 # Disable the built-in advertising ID
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -Value 0 -Type DWord
