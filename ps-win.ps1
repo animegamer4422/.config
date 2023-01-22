@@ -1,37 +1,37 @@
-$PSVersionTable = Get-Item "HKLM:\SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine\PowerShellVersion"
-$PSVersion = $PSVersionTable.GetValue("PSVersion")
-Write-Host "The current PowerShell version is $PSVersion"
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 
-$latestPSVersion = winget show --id=Microsoft.PowerShell | Select-String -Pattern "^Version:" | ForEach-Object {$_.Matches.Value -replace "Version: "}
-if ($PSVersion.Major -lt $latestPSVersion.Major) {
-    $isElevated = ([Security.Principal.WindowsIdentity]::GetCurrent()).IsElevated
-    if ($isElevated) {
-        # code to install the latest version of PowerShell using winget package manager
-        winget install --id=Microsoft.PowerShell -e
-        # Set the installed version of PowerShell as the default
-        $PSDefault = (Get-ChildItem "HKLM:\SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine\PowerShellVersion" | Where-Object {$_.GetValue("PSVersion") -gt $PSVersion} | Sort-Object -Property PSVersion -Descending | Select-Object -First 1).GetValue("PSVersion")
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\powershell.exe" -Name "(Default)" -Value "powershell.exe -Version $PSDefault"
-        Write-Host "PowerShell has been updated to the latest version, please re-run the script to continue."
-    } else {
-        Write-Host "Please run the script as an Administrator to install the latest version of PowerShell and set as default"
+if (!$isAdmin) {
+    Write-Host "The current session is not running as an administrator. Opening a new elevated PowerShell window..."
+    Start-Process powershell -Verb runAs -ArgumentList "-Command `"& {& '$MyInvocation.MyCommand.Path'}`"" -NoNewWindow
+    exit
+}
+
+$currentPSVersion = $PSVersionTable.PSVersion.Major
+Write-Host "The current PowerShell version is $currentPSVersion"
+
+$latestReleasePage = (New-Object Net.WebClient).DownloadString("https://github.com/PowerShell/PowerShell/releases/latest")
+$latestPSVersion = ($latestReleasePage | Select-String -Pattern "PowerShell ([0-9]+\.[0-9]+\.[0-9]+)" -AllMatches).Matches.Groups[1].Value
+$latestPSVersion = [version]$latestPSVersion
+
+if ($currentPSVersion -lt $latestPSVersion.Major) {
+    if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
+        # Set the PowerShell Gallery repository to Trusted
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        # Install winget without prompting for confirmation
+        Install-Script -Name winget-install -Force
+        winget-install
     }
+    Write-Host "Updating PowerShell to version $latestPSVersion"
+    winget install Microsoft.PowerShell
 } else {
     Write-Host "PowerShell is already up to date"
-    # Set the current version of PowerShell as the default
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\powershell.exe" -Name "(Default)" -Value "powershell.exe -Version $PSVersion"
+    if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
+        # Set the PowerShell Gallery repository to Trusted
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        # Install winget without prompting for confirmation
+        Install-Script -Name winget-install -Force
+        winget-install
+    }
 }
 
-# Check if winget is installed
-if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
-    # Set the PowerShell Gallery repository to Trusted
-    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-
-    # Install winget without prompting for confirmation
-    Install-Script -Name winget-install -Force
-    write-host 'Installing Winget'
-    winget-install
-}
-
-# Run the auto-setup after Installing powershell and winget
-$scriptPath = "$pwd\auto-config.ps1"
-Start-Process powershell -Verb runAs -ArgumentList "-File `"$scriptPath`"" -NoNewWindow
+$scriptPath = "$pwd
