@@ -34,4 +34,4 @@ if ($currentPSVersion -lt $latestPSVersion.Major) {
     }
 }
 
-$scriptPath = "$pwd
+$scriptPath = "$pwd"
