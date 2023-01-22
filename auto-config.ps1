@@ -43,6 +43,18 @@ foreach ($bucket in $bucketsToAdd) {
 scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
 
 # Winget
+
+# Check if winget is installed
+if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
+    # Set the PowerShell Gallery repository to Trusted
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+    # Install winget without prompting for confirmation
+    Install-Script -Name winget -Force
+    write-host 'Installing Winget'
+    winget-install
+}
+
 winget upgrade
 winget upgrade --all -h
 $installedPackages = winget show --installed
