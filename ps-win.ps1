@@ -32,3 +32,7 @@ if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
     write-host 'Installing Winget'
     winget-install
 }
+
+# Run the auto-setup after Installing powershell and winget
+$scriptPath = "$pwd\auto-config.ps1"
+Start-Process powershell -Verb runAs -ArgumentList "-File `"$scriptPath`"" -NoNewWindow
