@@ -7,12 +7,11 @@ if ($PSVersion.Major -lt $latestPSVersion.Major) {
     $isElevated = ([Security.Principal.WindowsIdentity]::GetCurrent()).IsElevated
     if ($isElevated) {
         # code to install the latest version of PowerShell using winget package manager
-        winget install --id=Microsoft.PowerShell -s=winget
-
+        winget install --id=Microsoft.PowerShell -e
         # Set the installed version of PowerShell as the default
         $PSDefault = (Get-ChildItem "HKLM:\SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine\PowerShellVersion" | Where-Object {$_.GetValue("PSVersion") -gt $PSVersion} | Sort-Object -Property PSVersion -Descending | Select-Object -First 1).GetValue("PSVersion")
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\powershell.exe" -Name "(Default)" -Value "powershell.exe -Version $PSDefault"
-        Write-Host "PowerShell has been updated to the latest version, please re-run the script using the installed powershell version to continue."
+        Write-Host "PowerShell has been updated to the latest version, please re-run the script to continue."
     } else {
         Write-Host "Please run the script as an Administrator to install the latest version of PowerShell and set as default"
     }
