@@ -1,5 +1,6 @@
 
 # Create a restore point
+if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore }
 Checkpoint-Computer -Description "System Restore Point before running auto-setup"
 
 # Scoop
@@ -23,7 +24,7 @@ foreach ($bucket in $bucketsToAdd) {
     }
 }
 
-scoop install cacert dark ffmpeg fzf gawk Hack-NF mpv neovim starship sudo wget yt-dlp
+scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
 
 # Winget
 winget upgrade
