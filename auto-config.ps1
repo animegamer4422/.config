@@ -3,7 +3,7 @@ Start-Process powershell -Verb runAs -Command {
 # Create a restore point
 if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore }
 Checkpoint-Computer -Description "System Restore Point before running auto-setup"
-
+}
 # Scoop
 # Check if scoop is installed or not and install it if it isn't accordingly to the currently running session
 if (!(Test-Path -Path "$env:USERPROFILE\scoop")) {
@@ -39,7 +39,6 @@ foreach ($bucket in $bucketsToAdd) {
 }
 
 scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
-
 
 # Winget
 
@@ -152,5 +151,3 @@ If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
 
         [System.Windows.MessageBox]::Show($Messageboxbody, $MessageboxTitle, $ButtonType, $MessageIcon)
         Write-Host "Updates Set to Recommended"
-
-}
