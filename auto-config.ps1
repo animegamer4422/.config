@@ -4,9 +4,25 @@ if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore }
 Checkpoint-Computer -Description "System Restore Point before running auto-setup"
 
 # Scoop
-# Check if scoop is installed or not and install it if it isn't
+# Check if scoop is installed or not and install it if it isn't accordingly to the currently running session
 if (!(Test-Path -Path "$env:USERPROFILE\scoop")) {
-    iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+    # Check if the current session is running as an administrator
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+
+# Download the Scoop installation script
+$scoopScript = (new-object net.webclient).downloadstring('https://get.scoop.sh')
+
+# Convert the script to a string and specify its width
+$scoopScript = $scoopScript | Out-String -Width 4096
+
+# Check if the current session is running as an administrator
+if($isAdmin) {
+    # Run the Scoop installation script with the -RunAsAdmin parameter
+    powershell -command "& {$scoopScript -RunAsAdmin}"
+} else {
+    # Run the Scoop installation script without the -RunAsAdmin parameter
+    powershell -command "& {$scoopScript}"
+}
 }
 
 scoop install aria2 git
