@@ -1,5 +1,8 @@
-# Scoop
 
+# Create a restore point
+Checkpoint-Computer -Description "System Restore Point before running auto-setup"
+
+# Scoop
 # Check if scoop is installed or not and install it if it isn't
 if (!(Test-Path -Path "$env:USERPROFILE\scoop")) {
     iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
@@ -10,14 +13,8 @@ scoop config aria2-warning-enabled false
 scoop update
 
 # Scoop check buckets and add them accordingly
-
-# Get the list of currently installed buckets
 $currentBuckets = scoop bucket list
-
-# Define the list of buckets to be added
 $bucketsToAdd = @("main", "versions", "extras", "nerd-fonts")
-
-# Loop through the list of buckets to be added
 foreach ($bucket in $bucketsToAdd) {
     # Check if the current bucket is already installed
     if ($currentBuckets -notcontains $bucket) {
@@ -29,13 +26,10 @@ foreach ($bucket in $bucketsToAdd) {
 scoop install cacert dark ffmpeg fzf gawk Hack-NF mpv neovim starship sudo wget yt-dlp
 
 # Winget
-
 winget upgrade
 winget upgrade --all -h
 $installedPackages = winget show --installed
-
 $packagesToCheck = @("Microsoft.DesktopAppInstaller_8wekyb3d8bbwe", "Microsoft.VCRedist.2015+.x64", "Microsoft.VCRedist.2015+.x86", "DuongDieuPhap.ImageGlass", "Microsoft.Powershell", "Microsoft.DotNet.DesktopRuntime.6", "Eugeny.Tabby", "Mozilla.Firefox")
-
 foreach ($package in $packagesToCheck) {
     if ($installedPackages -notcontains $package) {
         winget install $package
@@ -58,9 +52,6 @@ if (Test-Path $path) {Remove-Item -Recurse -Force $path}
 New-Item -ItemType SymbolicLink -Path $path -Target "$env:userprofile\.config\mpv\portable_config"
 
 # TWEAKS
-
-# Create a restore point
-Checkpoint-Computer -Description "System Restore Point before running auto-setup"
 
 # Disable the built-in advertising ID
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -Value 0 -Type DWord
