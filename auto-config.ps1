@@ -1,4 +1,5 @@
 
+Start-Process powershell -Verb runAs -Command {
 # Create a restore point
 if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore }
 Checkpoint-Computer -Description "System Restore Point before running auto-setup"
@@ -39,7 +40,6 @@ foreach ($bucket in $bucketsToAdd) {
 
 scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
 
-Start-Process powershell -Verb runAs -Command {
 
 # Winget
 
