@@ -1,11 +1,7 @@
-
-Start-Process powershell -Verb runAs -ArgumentList "-Command `"{
-if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore }
-Checkpoint-Computer -Description "System Restore Point before running auto-setup"
-}`"" -NoNewWindow
-
 # Create a restore point
-#
+Start-Process powershell -Verb runAs -ArgumentList "-Command `"if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore } Checkpoint-Computer -Description `'System Restore Point before running auto-setup`'`""
+
+
 # Scoop
 # Check if scoop is installed or not and install it if it isn't accordingly to the currently running session
 if (!(Test-Path -Path "$env:USERPROFILE\scoop")) {
