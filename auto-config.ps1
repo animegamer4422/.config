@@ -1,5 +1,3 @@
-winget upgrade
-winget upgrade --all -h
 $installedPackages = winget show --installed
 $packagesToCheck = @("Microsoft.DesktopAppInstaller_8wekyb3d8bbwe", "Microsoft.VCRedist.2015+.x64", "Microsoft.VCRedist.2015+.x86", "DuongDieuPhap.ImageGlass", "Microsoft.Powershell", "Microsoft.DotNet.DesktopRuntime.6", "Eugeny.Tabby", "Mozilla.Firefox")
 foreach ($package in $packagesToCheck) {
