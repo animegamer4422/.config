@@ -35,4 +35,4 @@ if ($currentPSVersion -lt $latestPSVersion.Major) {
 }
 
 $scriptPath = "$pwd/auto-config.ps1"
-Start-Process powershell -Verb runAs -ArgumentList "-File `"$scriptPath`"" -NoNewWindow
+Start-Process pwsh -Verb runAs -ArgumentList "-File `"$scriptPath`""
