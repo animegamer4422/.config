@@ -1,14 +1,14 @@
 $installedPackages = winget show --installed
-$packagesToCheck = @("Microsoft.DesktopAppInstaller_8wekyb3d8bbwe", "Microsoft.VCRedist.2015+.x64", "Microsoft.VCRedist.2015+.x86", "DuongDieuPhap.ImageGlass", "Microsoft.Powershell", "Microsoft.DotNet.DesktopRuntime.6", "Eugeny.Tabby", "Mozilla.Firefox")
+$packagesToCheck = @("Microsoft.Powershell", "Mozilla.Firefox")
 foreach ($package in $packagesToCheck) {
     if ($installedPackages -notcontains $package) {
-        winget install $package
+        winget install -h -e $package -s=winget
     }
 }
 
 
 # Create a restore point
-if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore }
+if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore -Drive "$env:SystemDrive"}
 Checkpoint-Computer -Description "System Restore Point before running auto-setup"
 
 # Scoop
@@ -18,34 +18,23 @@ if (!(Test-Path -Path "$env:USERPROFILE\scoop")) {
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 
 # Download the Scoop installation script
-$scoopScript = (new-object net.webclient).downloadstring('https://get.scoop.sh')
-$scoopScript = $scoopScript | Out-String -Width 4096
+$scoopScript = irm -o scoop.sh 'https://get.scoop.sh'
 
 # Check if the current session is running as an administrator
 if($isAdmin) {
     # Run Scoop installer with -RunAsAdmin
-    powershell -command "& {$scoopScript -RunAsAdmin}"
+    pwsh -command "& {scoop.sh -RunAsAdmin}"
 } else {
-    powershell -command "& {$scoopScript}"
+    pwsh -command "& {scoop.sh}"
     }
 }
 
-scoop install aria2 git
-scoop config aria2-warning-enabled false
-scoop update
+pwsh /c scoop install aria2 git
+pwsh /c scoop config aria2-warning-enabled false
+pwsh /c scoop update
 
 # Scoop check buckets and add them accordingly
-$currentBuckets = scoop bucket list
-$bucketsToAdd = @("main", "versions", "extras", "nerd-fonts")
-foreach ($bucket in $bucketsToAdd) {
-    # Check if the current bucket is already installed
-    if ($currentBuckets -notcontains $bucket) {
-        # Add the bucket if it's not already installed
-        scoop bucket add $bucket
-    }
-}
-
-scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
+pwsh /c $currentBuckets = scoop bucket list;$bucketsToAdd = @("main", "versions", "extras", "nerd-fonts");foreach ($bucket in $bucketsToAdd) {if ($currentBuckets -notcontains $bucket) {scoop bucket add $bucket}};scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
 
 
 
