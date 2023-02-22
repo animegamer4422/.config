@@ -14,10 +14,15 @@ function rm([string]$FileName)
 }
 
 function commit($message) {
-		Write-Host "Commit message is $message"
-		git add .
-		git commit -m "$message"
-	}
+    if ([string]::IsNullOrWhiteSpace($message)) {
+        $message = Read-Host "Enter commit message"
+    }
+
+    Write-Host "Commit message is $message"
+    git add .
+    git commit -m "$message"
+}
+
 
 #function install($name) {
 #    $selected = winget search -s=winget $name | ForEach-Object { ($_ -split '\s{2,}')[0] } | Select-Object -Skip 4 | fzf
