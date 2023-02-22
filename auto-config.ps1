@@ -77,10 +77,6 @@ Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "CsE
 $Powercfg = powercfg.exe /s 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
 Invoke-Expression $Powercfg
 
-# Remove all the Start menu pinned applications
-
-Get-ChildItem "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs" -Recurse -Include "*.lnk" | ForEach-Object {Remove-Item $_.FullName}
-
 # Remove all the uwp apps
 sudo pwsh /c import-module appx -usewindowspowershell; Get-AppxPackage -AllUsers | Where-Object {$_.Name -notlike "*store*"} | Remove-AppxPackage; exit 
 
