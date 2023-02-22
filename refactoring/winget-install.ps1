@@ -14,3 +14,4 @@ function Install-Winget {
     }
 }
 
+Install-Winget
