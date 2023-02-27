@@ -1,5 +1,3 @@
-cd ~
-
 # Alias 
 Set-Alias vim nvim
 Set-Alias ll ls
