@@ -6,6 +6,7 @@ Set-Alias ll ls
 Set-Alias grep findstr
 Set-Alias -Name c -Value z -Option AllScope
 Set-Alias edit helix
+$psconfig = "$env:USERPROFILE/.config/powershell/user-profile.ps1"
 
 # Function
 function rm([string]$FileName)
@@ -24,17 +25,15 @@ function commit($message) {
 }
 
 
-#function install($name) {
-#    $selected = winget search -s=winget $name | ForEach-Object { ($_ -split '\s{2,}')[0] } | Select-Object -Skip 4 | fzf
-#    $id = winget search -s=winget $selected | ForEach-Object { ($_ -split '\s+')[1] }
-#    winget install -s=winget $id
-#}
-
 function install($name) {
-		$app = winget search -s=winget "$name" | Select-Object -Skip 3 | ForEach-Object { ($_ -split '\s{2,}')[0] } | Out-String | fzf
-		$selected = winget search -s=winget "$app" | Select-Object -Skip 2 | ForEach-Object { ($_ -split '\s{2,}')[0] } | Select-String -Pattern '\S+\.\S+' -AllMatches | ForEach-Object { $_.Matches.Value }
-		Write-Host "$selected"
-	}
+    if (-not $name) {
+        $name = Read-Host "App to Install"
+    }
+    $app = winget search -s=winget "$name" | Select-Object -Skip 3 | ForEach-Object { ($_ -split '\s{2,}')[0] } | Out-String | fzf
+    $selected = winget search -s=winget "$app" | awk '/\S+\.\S+/ {print $2}'
+    Write-Host "$selected"
+    winget install --accept-package-agreements -h -s=winget "$selected"
+}
 
 # Set the prompt to Starship
 Invoke-Expression (&starship init powershell)
