@@ -18,7 +18,7 @@ function Install-Winget {
 Install-Winget
 
 $installedPackages = winget show --installed
-$packagesToCheck = @("Microsoft.Powershell", "Mozilla.Firefox")
+$packagesToCheck = @("Microsoft.Powershell", "Mozilla.Firefox", " Microsoft.PowerShell", " Microsoft.WindowsTerminal")
 foreach ($package in $packagesToCheck) {
     if ($installedPackages -notcontains $package) {
         winget install -h -e $package -s=winget
