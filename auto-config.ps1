@@ -108,7 +108,7 @@ sudo pwsh /c import-module appx -usewindowspowershell; Get-AppxPackage -AllUsers
 
 # Remove EDGE completely from the system
 
-sudo cmd ./edge-Uninstall.bat
+sudo pwsh ./edge-Uninstall.bat
 
 #Set the updates to Security Only
 write-host "`n Setting updates to Security Only"
