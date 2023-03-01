@@ -47,7 +47,7 @@ if($isAdmin) {
     }
 }
 
-pwsh /c scoop install aria2 git
+pwsh /c scoop install aria2 git # use this to add 7-zip to context menu C:\Users\Hari\scoop\apps\7zip\current\install-context.reg
 pwsh /c scoop config aria2-warning-enabled false
 pwsh /c scoop update
 
