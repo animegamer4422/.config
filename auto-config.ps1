@@ -36,14 +36,14 @@ if (!(Test-Path -Path "$env:USERPROFILE\scoop")) {
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 
 # Download the Scoop installation script
-$scoopScript = irm -o scoop.ps1 'https://get.scoop.sh'
+irm -o scoop.ps1 'https://get.scoop.sh'
 
 # Check if the current session is running as an administrator
 if($isAdmin) {
     # Run Scoop installer with -RunAsAdmin
-    pwsh -command "& {scoop.ps1 -RunAsAdmin}"
+    pwsh -command "& {./scoop.ps1 -RunAsAdmin}"
 } else {
-    pwsh -command "& {scoop.ps1}"
+    pwsh -command "& {./scoop.ps1}"
     }
 }
 
