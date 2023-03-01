@@ -57,8 +57,15 @@ pwsh /c $currentBuckets = scoop bucket list;$bucketsToAdd = @("main", "versions"
 
 
 # Set UAC to Never Notify
-
 New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 0 -PropertyType "DWord" -Force | Out-Null
+
+# Powershell Config
+$profilePath = $PROFILE.CurrentUserAllHosts
+if (!(Test-Path $profilePath)) {
+    New-Item -ItemType File -Path $profilePath -Force
+}
+Add-Content -Path $profilePath -Value '. $env:USERPROFILE/.config/powershell/user-profile.ps1'
+
 
 # Tabby Config
 $username = $env:username
