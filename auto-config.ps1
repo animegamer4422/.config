@@ -104,7 +104,7 @@ $Powercfg = powercfg.exe /s 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
 Invoke-Expression $Powercfg
 
 # Remove all the uwp apps
-sudo pwsh /c import-module appx -usewindowspowershell; Get-AppxPackage -AllUsers | Where-Object {$_.Name -notlike "*store*"} | Remove-AppxPackage; exit 
+sudo pwsh /c import-module appx -usewindowspowershell; Get-AppxPackage -AllUsers | Where-Object {$_.Name -notlike "*store*" -and $_.Name -notlike "*Microsoft.Windows.Photos*" -and $_.Name -notlike "*Microsoft.DesktopAppInstaller*" -and $_.Name -and $_.Name -notlike "*Microsoft.UI*" -and $_.Name -notlike "*Microsoft.VCLibs*" -and $_.Name -notlike "*Microsoft.*Terminal*" -and $_.Name -notlike "*Microsoft.*HEIF*" -and $_.Name -notlike "*.NET.Native*" -and $_.Name -notlike "*VP9VideoExtensions*" -and $_.Name -notlike "*WebpImageExtension*"} | Remove-AppxPackage
 
 # Remove EDGE completely from the system
 
