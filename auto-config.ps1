@@ -72,10 +72,14 @@ scoop-invoke
 New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 0 -PropertyType "DWord" -Force | Out-Null
 
 # Powershell Config
-$profilePath = $PROFILE.CurrentUserAllHosts
-if (!(Test-Path $profilePath)) {
-    New-Item -ItemType File -Path $profilePath -Force
+$config = {
+    $profilePath = $PROFILE.CurrentUserAllHosts
+    if (!(Test-Path $profilePath)) {
+        New-Item -ItemType File -Path $profilePath -Force
+    }
+    Add-Content -Path $profilePath -Value '. $env:USERPROFILE/.config/powershell/user-profile.ps1'
 }
+pwsh -Command $config
 Add-Content -Path $profilePath -Value '. $env:USERPROFILE/.config/powershell/user-profile.ps1'
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 install-module -Force PSReadLine
@@ -157,12 +161,5 @@ If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "BranchReadinessLevel" -Type DWord -Value 20
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "DeferFeatureUpdatesPeriodInDays" -Type DWord -Value 365
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "DeferQualityUpdatesPeriodInDays " -Type DWord -Value 4
-    
-        $ButtonType = [System.Windows.MessageBoxButton]::OK
-        $MessageboxTitle = "Set Security Updates"
-        $Messageboxbody = ("Recommended Update settings loaded")
-        $MessageIcon = [System.Windows.MessageBoxImage]::Information
-
-        [System.Windows.MessageBox]::Show($Messageboxbody, $MessageboxTitle, $ButtonType, $MessageIcon)
         Write-Host "Updates Set to Recommended"
 
