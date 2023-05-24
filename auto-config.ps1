@@ -54,7 +54,15 @@ pwsh /c scoop config aria2-warning-enabled false
 pwsh /c scoop update
 
 # Scoop check buckets and add them accordingly
-pwsh /c $currentBuckets = scoop bucket list;$bucketsToAdd = @("main", "versions", "extras", "nerd-fonts");foreach ($bucket in $bucketsToAdd) {if ($currentBuckets -notcontains $bucket) {scoop bucket add $bucket}};scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
+pwsh -command "& { $currentBuckets = scoop bucket list; return $currentBuckets }" | Set-Variable -Name currentBuckets
+$bucketsToAdd = @("main", "versions", "extras", "nerd-fonts")
+foreach ($bucket in $bucketsToAdd) {
+    if ($currentBuckets -notcontains $bucket) {
+        pwsh -command "& { scoop bucket add $bucket }"
+    }
+}
+pwsh -command "& { scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp }"
+
 }
 }
 
