@@ -77,10 +77,17 @@ if (!(Test-Path $profilePath)) {
     New-Item -ItemType File -Path $profilePath -Force
 }
 Add-Content -Path $profilePath -Value '. $env:USERPROFILE/.config/powershell/user-profile.ps1'
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+install-module -Force PSReadLine
+install-module -Force PSFzf
+install-module -Force Terminal-Icons
 
 
 # Tabby Config
 $username = $env:username
+if (-not (Test-Path "C:\Users\$username\AppData\Roaming\tabby")) { 
+    New-Item -ItemType Directory -Force -Path "C:\Users\$username\AppData\Roaming\tabby"
+}
 if (Test-Path "C:\Users\$username\AppData\Roaming\tabby\config.yaml") { Remove-Item "C:\Users\$username\AppData\Roaming\tabby\config.yaml"}
 Copy-Item "./tabby/config.yaml" "C:\Users\$username\AppData\Roaming\tabby\config.yaml"
 
