@@ -55,7 +55,7 @@ pwsh /c scoop update
 
 # Scoop check buckets and add them accordingly
 pwsh -command "& { $currentBuckets = scoop bucket list; return $currentBuckets }" | Set-Variable -Name currentBuckets
-$bucketsToAdd = @("main", "versions", "extras", "nerd-fonts")
+$bucketsToAdd = @("versions", "extras", "nerd-fonts")
 foreach ($bucket in $bucketsToAdd) {
     if ($currentBuckets -notcontains $bucket) {
         pwsh -command "& { scoop bucket add $bucket }"
