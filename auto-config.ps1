@@ -30,6 +30,7 @@ foreach ($package in $packagesToCheck) {
 if((Get-ComputerRestorePoint).configured -eq $false) { Enable-ComputerRestore -Drive "$env:SystemDrive"}
 Checkpoint-Computer -Description "System Restore Point before running auto-setup"
 
+function scoop-invoke {
 # Scoop
 # Check if scoop is installed or not and install it if it isn't accordingly to the currently running session
 if (!(Test-Path -Path "$env:USERPROFILE\scoop")) {
@@ -46,7 +47,7 @@ if($isAdmin) {
 } else {
     pwsh -command "& {./scoop.ps1}"
     }
-}
+
 
 pwsh /c scoop install aria2 git # use this to add 7-zip to context menu C:\Users\Hari\scoop\apps\7zip\current\install-context.reg
 pwsh /c scoop config aria2-warning-enabled false
@@ -54,8 +55,10 @@ pwsh /c scoop update
 
 # Scoop check buckets and add them accordingly
 pwsh /c $currentBuckets = scoop bucket list;$bucketsToAdd = @("main", "versions", "extras", "nerd-fonts");foreach ($bucket in $bucketsToAdd) {if ($currentBuckets -notcontains $bucket) {scoop bucket add $bucket}};scoop install cacert dark ffmpeg fzf Hack-NF mpv neovim starship sudo wget yt-dlp
+}
+}
 
-
+scoop-invoke
 
 # Set UAC to Never Notify
 New-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 0 -PropertyType "DWord" -Force | Out-Null
@@ -104,7 +107,7 @@ $Powercfg = powercfg.exe /s 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
 Invoke-Expression $Powercfg
 
 # Remove all the uwp apps
-sudo pwsh /c import-module appx -usewindowspowershell; Get-AppxPackage -AllUsers | Where-Object {$_.Name -notlike "*store*" -and $_.Name -notlike "*Microsoft.Windows.Photos*" -and $_.Name -notlike "*Microsoft.DesktopAppInstaller*" -and $_.Name -and $_.Name -notlike "*Microsoft.UI*" -and $_.Name -notlike "*Microsoft.VCLibs*" -and $_.Name -notlike "*Microsoft.*Terminal*" -and $_.Name -notlike "*Microsoft.*HEIF*" -and $_.Name -notlike "*.NET.Native*" -and $_.Name -notlike "*VP9VideoExtensions*" -and $_.Name -notlike "*WebpImageExtension*"} | Remove-AppxPackage
+sudo pwsh /c import-module appx -usewindowspowershell; Get-AppxPackage -AllUsers | Where-Object {$_.Name -notlike "*store*" -and $_.Name -notlike "*Microsoft.Windows.Photos*" -and $_.Name -notlike "*Microsoft.DesktopAppInstaller*" -and $_.Name -and $_.Name -notlike "*Microsoft.UI*" -and $_.Name -notlike "*Microsoft.VCLibs*" -and $_.Name -notlike "*Microsoft.*Terminal*" -and $_.Name -notlike "*Microsoft.*HEIF*" -and $_.Name -notlike "*.NET.Native*" -and $_.Name -notlike "*VP9VideoExtensions*" -and $_.Name -notlike "*WebpImageExtension*"} | Remove-AppxPackage -ErrorAction SilentlyContinue
 
 # Remove EDGE completely from the system
 
