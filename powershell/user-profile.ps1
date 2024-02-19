@@ -2,8 +2,7 @@
 Set-Alias vim nvim
 Set-Alias ll ls
 Set-Alias grep findstr
-Set-Alias -Name c -Value z -Option AllScope
-Set-Alias edit helix
+Set-Alias edit nvim
 $psconfig = "$env:USERPROFILE/.config/powershell/user-profile.ps1"
 
 # Set the prompt to Starship
